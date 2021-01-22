@@ -9,6 +9,8 @@ const web3 = new Web3(
   new Web3.providers.WebsocketProvider(`wss://mainnet.infura.io/ws/v3/${process.env.PROJECT_ID}`)
 );
 
+web3.eth.accounts.wallet.add(process.env.PRIVATE_KEY);
+
 const kyber = new web3.eth.Contract(
   abis.kyber.kyberNetworkProxy,
   addresses.kyber.kyberNetworkProxy
