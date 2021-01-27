@@ -1,12 +1,11 @@
-pragma solidity ^0.7.2;
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 import "@studydefi/money-legos/dydx/contracts/DydxFlashloanBase.sol";
 import "@studydefi/money-legos/dydx/contracts/ICallee.sol";
-import {
-    KyberNetworkProxy as IKyberNetworkProxy
-} from "@studydefi/money-legos/dydx/contracts/KyberNetworkProxy.sol";
-
+import { KyberNetworkProxy as IKyberNetworkProxy } from "@studydefi/money-legos/kyber/contracts/KyberNetworkProxy.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import "./IUniswapV2Router02.sol";
@@ -53,7 +52,7 @@ contract Flashloan is ICallee, DydxFlashloanBase {
         if (arbInfo.direction == Direction.KyberToUniswap) {
             // Buy ETH on Kyber //
             dai.approve(address(kyber), balOfDai);
-            kyber.getExpectedRate(dai, IERC20(KYBER_ETH_ADDRESS), balOfDai);
+            (uint expectedRate, ) = kyber.getExpectedRate(dai, IERC20(KYBER_ETH_ADDRESS), balOfDai);
             kyber.swapTokenToEther(dai, balOfDai, expectedRate);
 
             // Sell ETH on Uniswap //
@@ -66,7 +65,7 @@ contract Flashloan is ICallee, DydxFlashloanBase {
                 minOuts[1],
                 path,
                 address(this),
-                now
+                block.timestamp
             );
         } else {
             // Buy on Uniswap
@@ -75,7 +74,7 @@ contract Flashloan is ICallee, DydxFlashloanBase {
             path[0] = address(dai);
             path[1] = address(weth);
             uint[] memory minOuts = uniswap.getAmountsOut(balOfDai, path);
-            uniswap.swapExactTokensForETH(balOfDai, minOuts[1], path, address(this), now);
+            uniswap.swapExactTokensForETH(balOfDai, minOuts[1], path, address(this), block.timestamp);
 
             // Sell on Kyber
             (uint expectedRate, ) = kyber.getExpectedRate(IERC20(KYBER_ETH_ADDRESS), dai, address(this).balance);
@@ -89,7 +88,7 @@ contract Flashloan is ICallee, DydxFlashloanBase {
 
         uint profit = dai.balanceOf(address(this)) - arbInfo.repayAmount;
         dai.transfer(beneficiary, profit);
-        emit NewArbitrage(arbInfo.direction, profit, now);
+        emit NewArbitrage(arbInfo.direction, profit, block.timestamp);
     }
 
     function initiateFlashloan(
@@ -128,5 +127,5 @@ contract Flashloan is ICallee, DydxFlashloanBase {
         solo.operate(accountInfos, operations);
     }
 
-    fallback() external payable {}
+    // fallback() external payable {}
 }

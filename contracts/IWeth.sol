@@ -12,8 +12,9 @@
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// SPDX-License-Identifier: GPL-3.0
 
-pragma solidity ^0.7.2;
+pragma solidity ^0.5.0;
 
 interface IWeth {
     function deposit() external payable;
