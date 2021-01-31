@@ -38,3 +38,11 @@ Que consiste en comprar tokens cuando son baratos y liquidar en otro DEX cuando 
 ```
 ## Siguientes Pasos.
 ...
+* Agregar más tokens con los cuales interactuar USDT, UNI, LINK, etc.
+* Agregar más DEX con los cuales buscar buena liquidez.
+* Actualizar la version de los contratos a una version más actual de Solidity.
+   -  (actualmente pragma solidity 0.5.0) -> actualizar a 0.7.2 minimo.
+* Deployar en la red principal de ethereum.
+* Deployar en alguna sidechain de ethereum para reducir el costo de las transacciones.
+* Mejorar el calculo de profit (el problema actual es que puede generar un profit mayor a   
+cero pero menor al costo de la transaccion).
